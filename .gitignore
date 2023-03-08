@@ -1,0 +1,14 @@
+# bloop and metals
+.bsp
+
+# intellij idea
+.idea
+
+# mac
+.DS_Store
+
+# sbt
+target
+
+# for local development
+local.conf
