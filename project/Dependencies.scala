@@ -4,7 +4,6 @@ object Dependencies {
   private val config = Seq("com.typesafe" % "config" % "1.4.2")
 
   private val logging = Seq(
-    "ch.qos.logback" % "logback-classic" % "1.4.5",
     "com.typesafe.scala-logging" %% "scala-logging" % "3.9.5")
 
   private val circeVersion = "0.14.5"
