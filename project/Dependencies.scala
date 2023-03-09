@@ -6,11 +6,12 @@ object Dependencies {
   private val logging = Seq(
     "com.typesafe.scala-logging" %% "scala-logging" % "3.9.5")
 
-  private val circeVersion = "0.14.5"
+  private val circeVersion = "0.14.3"
   private val circe = Seq(
     "io.circe" %% "circe-core" % circeVersion,
+    "io.circe" %% "circe-parser" % circeVersion,
     "io.circe" %% "circe-generic" % circeVersion,
-    "io.circe" %% "circe-parser" % circeVersion)
+    "io.circe" %% "circe-generic-extras" % circeVersion)
 
   private val cats = Seq("org.typelevel" %% "cats-effect" % "3.4.8")
 
