@@ -6,10 +6,10 @@ import com.typesafe.scalalogging.LazyLogging
 import dev.maxmelnyk.openaiscala.config.Config
 import dev.maxmelnyk.openaiscala.exceptions.OpenAIClientException
 import dev.maxmelnyk.openaiscala.models.Model
+import dev.maxmelnyk.openaiscala.utils.JsonImplicits._
+import io.circe.parser.{decode, parse}
 import sttp.client3.{SttpBackend, UriContext, basicRequest}
 import sttp.model.{HeaderNames, MediaType, StatusCode}
-import io.circe.parser.{decode, parse}
-import dev.maxmelnyk.openaiscala.utils.JsonImplicits._
 
 trait OpenAIClient[F[_]] {
   def listModels(): F[Seq[Model]]
@@ -17,8 +17,16 @@ trait OpenAIClient[F[_]] {
   def retrieveModel(modelId: String): F[Option[Model]]
 }
 
-private class DefaultOpenAIClient[F[_]](sttpBackend: SttpBackend[F, Any])
-                                       (implicit monadError: MonadError[F, Throwable])
+object OpenAIClient {
+  def apply[F[_]](sttpBackend: SttpBackend[F, Any])
+                 (implicit monadError: MonadError[F, Throwable]): OpenAIClient[F] = {
+    new DefaultOpenAIClient(sttpBackend)
+  }
+}
+
+
+private[client] class DefaultOpenAIClient[F[_]](sttpBackend: SttpBackend[F, Any])
+                                               (implicit monadError: MonadError[F, Throwable])
   extends OpenAIClient[F]
     with LazyLogging {
 
@@ -85,22 +93,22 @@ private class DefaultOpenAIClient[F[_]](sttpBackend: SttpBackend[F, Any])
           case (statusCode, responseBody) =>
             throw OpenAIClientException(
               s"Failed to retrieve $modelId model: " +
-              s"status: $statusCode, " +
-              s"body: ${responseBody.fold(identity, identity)}")
+                s"status: $statusCode, " +
+                s"body: ${responseBody.fold(identity, identity)}")
         }
       }
   }
 
   // it just wraps all the unknown errors to the known wrapper
   private def catchUnknownErrors[A](f: => F[A]): F[A] = {
-    f.adaptError{
+    f.adaptError {
       case e: OpenAIClientException => e
       case e: Throwable => OpenAIClientException("Unknown error", e)
     }
   }
 }
 
-private object DefaultOpenAIClient {
+private[client] object DefaultOpenAIClient {
   private val baseUrl: String = "https://api.openai.com/v1"
   private val orgIdHeaderName = "OpenAI-Organization"
 
