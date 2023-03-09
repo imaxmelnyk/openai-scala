@@ -2,6 +2,9 @@ package dev.maxmelnyk.openaiscala.models
 
 import java.time.LocalDateTime
 
+/**
+ * [[https://platform.openai.com/docs/api-reference/models]]
+ */
 case class Model(id: String,
                  created: LocalDateTime,
                  ownedBy: String,

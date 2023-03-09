@@ -20,12 +20,16 @@ trait OpenAIClient[F[_]] {
   /**
    * Lists the currently available models.
    *
+   * [[https://platform.openai.com/docs/api-reference/models/list]]
+   *
    * @return a sequence of models.
    */
   def listModels(): F[Seq[Model]]
 
   /**
    * Retrieves a model instance.
+   *
+   * [[https://platform.openai.com/docs/api-reference/models/retrieve]]
    *
    * @param modelId The ID of the model to use for this request.
    * @return model instance.
@@ -88,7 +92,8 @@ private[client] class DefaultOpenAIClient[F[_]](private val apiKey: String,
     }
   }
 
-  def listModels(): F[Seq[Model]] = catchUnknownErrors {
+  @throws[OpenAIClientException]
+  def listModels(): F[Seq[Model]] = {
     logger.debug("Retrieving models")
 
     basicRequest
@@ -103,7 +108,8 @@ private[client] class DefaultOpenAIClient[F[_]](private val apiKey: String,
               throw OpenAIClientException(s"Failed to parse response body: $responseBody")
             }
 
-            responseBodyJson.hcursor.downField("data").as[Seq[Model]] match {
+            // the actual models are in "data" field
+            responseBodyJson.hcursor.downField("data").as[List[Model]] match {
               case Left(error) =>
                 throw OpenAIClientException(s"Failed to decode response body: $responseBody", error)
               case Right(models) =>
@@ -121,7 +127,8 @@ private[client] class DefaultOpenAIClient[F[_]](private val apiKey: String,
       }
   }
 
-  def retrieveModel(modelId: String): F[Option[Model]] = catchUnknownErrors {
+  @throws[OpenAIClientException]
+  def retrieveModel(modelId: String): F[Option[Model]] = {
     logger.debug(s"Retrieving $modelId model")
 
     basicRequest
@@ -153,14 +160,6 @@ private[client] class DefaultOpenAIClient[F[_]](private val apiKey: String,
                 s"body: ${responseBody.fold(identity, identity)}")
         }
       }
-  }
-
-  // it just wraps all the unknown errors to the known wrapper
-  private def catchUnknownErrors[A](f: => F[A]): F[A] = {
-    f.adaptError {
-      case e: OpenAIClientException => e
-      case e: Throwable => OpenAIClientException("Unknown error", e)
-    }
   }
 }
 
