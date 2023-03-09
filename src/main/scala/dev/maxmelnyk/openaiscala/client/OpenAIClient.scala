@@ -33,7 +33,7 @@ trait OpenAIClient[F[_]] {
 
 object OpenAIClient {
   /**
-   * Creates an instance of [[OpenAIClient]].
+   * Creates a default instance of [[OpenAIClient]].
    *
    * @param apiKey OpenAI API key.
    * @param orgIdOpt OpenAI organization ID.
@@ -50,7 +50,7 @@ object OpenAIClient {
   }
 
   /**
-   * Creates an instance of [[OpenAIClient]] using config values for api key and org id.
+   * Creates a default instance of [[OpenAIClient]] using config values for api key and org id.
    *
    * @param sttpBackend sttp backend to use for requests.
    * @param monadError monad error instance, so we know how to operate with provided monad type.
