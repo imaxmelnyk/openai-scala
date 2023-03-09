@@ -8,7 +8,7 @@ import io.circe.generic.extras.semiauto._
 import java.time.{LocalDateTime, ZoneOffset}
 
 private[openaiscala] object JsonImplicits {
-  implicit val config: Configuration = Configuration.default.withSnakeCaseMemberNames
+  private implicit val config: Configuration = Configuration.default.withSnakeCaseMemberNames
 
   implicit val localDateTimeDecoder: Decoder[LocalDateTime] = Decoder.decodeLong.map { epochSecond =>
     LocalDateTime.ofEpochSecond(epochSecond, 0, ZoneOffset.UTC)

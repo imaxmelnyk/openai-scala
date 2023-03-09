@@ -16,5 +16,7 @@ object Dependencies {
 
   private val sttp = Seq("com.softwaremill.sttp.client3" %% "core" % "3.8.12")
 
-  val allDeps: Seq[ModuleID] = config ++ logging ++ circe ++ cats ++ sttp
+  private val test = Seq("org.scalatest" %% "scalatest" % "3.2.15" % Test)
+
+  val allDeps: Seq[ModuleID] = config ++ logging ++ circe ++ cats ++ sttp ++ test
 }
