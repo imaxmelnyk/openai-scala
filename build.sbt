@@ -17,3 +17,6 @@ import xerial.sbt.Sonatype._
 sonatypeCredentialHost := "s01.oss.sonatype.org"
 sonatypeRepository := "https://s01.oss.sonatype.org/service/local"
 sonatypeProjectHosting := Some(GitHubHosting("imaxmelnyk", "openai-scala", "max@maxmelnyk.dev"))
+
+// remove the requirement for the v-prefix for tags
+dynverVTagPrefix := false
