@@ -1,0 +1,44 @@
+name: "Release"
+
+on:
+  push:
+    branches: ["master"]
+    tags: ["*"]
+
+jobs:
+  release:
+    name: "Release"
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: zulu
+          cache: sbt
+
+      - name: Run Tests
+        run: sbt test
+
+      - name: Test Report
+        uses: mikepenz/action-junit-report@v3
+        if: always()
+        with:
+          check_name: Test Report
+          report_paths: target/test-reports/TEST-*.xml
+
+      - name: Release
+        run: sbt ci-release
+        env:
+          PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
+          PGP_SECRET: ${{ secrets.PGP_SECRET }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
