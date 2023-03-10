@@ -5,6 +5,9 @@ on:
     branches: ["master"]
     tags: ["*"]
 
+permissions:
+  checks: write
+
 jobs:
   release:
     name: "Release"
