@@ -1,12 +1,15 @@
-name: 'Test'
+name: "Test"
 
 on:
   pull_request:
     branches: ["master"]
 
+permissions:
+  checks: write
+
 jobs:
   test:
-    name: 'Test'
+    name: "Test"
     runs-on: ubuntu-latest
 
     defaults:
