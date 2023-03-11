@@ -2,7 +2,7 @@ package dev.maxmelnyk.openaiscala.client
 
 import cats.instances.all.catsStdInstancesForTry
 import dev.maxmelnyk.openaiscala.exceptions.OpenAIClientException
-import dev.maxmelnyk.openaiscala.models.Model
+import dev.maxmelnyk.openaiscala.models.ModelInfo
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import sttp.client3.testing.SttpBackendStub
@@ -87,12 +87,12 @@ class DefaultOpenAIClientSpec extends AnyFlatSpec with Matchers {
       case Success(models) =>
         models should have length 2
         models should contain theSameElementsAs List(
-          Model(
+          ModelInfo(
             "gpt-3.5-turbo",
             LocalDateTime.of(2023, 2, 28, 18, 56, 42),
             "openai",
             List(
-              Model.Permission(
+              ModelInfo.Permission(
                 "modelperm-QvbW9EnkbwPtWZuEYnCBAMsO",
                 LocalDateTime.of(2023, 3, 7, 12, 57, 34),
                 allowCreateEngine = false,
@@ -106,12 +106,12 @@ class DefaultOpenAIClientSpec extends AnyFlatSpec with Matchers {
                 isBlocking = false)),
             "gpt-3.5-turbo",
             None),
-          Model(
+          ModelInfo(
             "davinci",
             LocalDateTime.of(2022, 4, 7, 19, 31, 14),
             "openai",
             List(
-              Model.Permission(
+              ModelInfo.Permission(
                 "modelperm-U6ZwlyAd0LyMk4rcMdz33Yc3",
                 LocalDateTime.of(2022, 11, 21, 21, 32, 35),
                 allowCreateEngine = false,
@@ -210,12 +210,12 @@ class DefaultOpenAIClientSpec extends AnyFlatSpec with Matchers {
 
     client(sttpBackend).retrieveModel("gpt-3.5-turbo") match {
       case Success(Some(model)) =>
-        model shouldEqual Model(
+        model shouldEqual ModelInfo(
           "gpt-3.5-turbo",
           LocalDateTime.of(2023, 2, 28, 18, 56, 42),
           "openai",
           List(
-            Model.Permission(
+            ModelInfo.Permission(
               "modelperm-QvbW9EnkbwPtWZuEYnCBAMsO",
               LocalDateTime.of(2023, 3, 7, 12, 57, 34),
               allowCreateEngine = false,

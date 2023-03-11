@@ -1,6 +1,6 @@
 package dev.maxmelnyk.openaiscala.utils
 
-import dev.maxmelnyk.openaiscala.models.Model
+import dev.maxmelnyk.openaiscala.models.ModelInfo
 import io.circe.Decoder
 import io.circe.generic.extras.Configuration
 import io.circe.generic.extras.semiauto._
@@ -14,6 +14,6 @@ private[openaiscala] object JsonImplicits {
     LocalDateTime.ofEpochSecond(epochSecond, 0, ZoneOffset.UTC)
   }
 
-  implicit val modelPermissionDecoder: Decoder[Model.Permission] = deriveConfiguredDecoder
-  implicit val modelDecoder: Decoder[Model] = deriveConfiguredDecoder
+  implicit val modelPermissionDecoder: Decoder[ModelInfo.Permission] = deriveConfiguredDecoder
+  implicit val modelDecoder: Decoder[ModelInfo] = deriveConfiguredDecoder
 }

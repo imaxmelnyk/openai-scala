@@ -19,7 +19,7 @@ scalacOptions ++= {
 libraryDependencies ++= Dependencies.allDeps
 
 // additional info for public releases
-description := "Scala client from OpenAI API"
+description := "Scala client for OpenAI API"
 organizationHomepage := Some(url("https://maxmelnyk.dev"))
 homepage := Some(url("https://github.com/imaxmelnyk/openai-scala"))
 licenses := Seq("MIT" -> url("https://choosealicense.com/licenses/mit"))
