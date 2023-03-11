@@ -2,7 +2,8 @@ package dev.maxmelnyk.openaiscala.client
 
 import cats.MonadError
 import dev.maxmelnyk.openaiscala.config.Configuration
-import dev.maxmelnyk.openaiscala.models.ModelInfo
+import dev.maxmelnyk.openaiscala.models.settings.CreateCompletionSettings
+import dev.maxmelnyk.openaiscala.models.{Completion, ModelInfo}
 import sttp.client3.SttpBackend
 
 /**
@@ -29,6 +30,16 @@ trait OpenAIClient[F[_]] {
    * @return model instance.
    */
   def retrieveModel(modelId: String): F[Option[ModelInfo]]
+
+  /**
+   * Creates a completion for the provided prompt and settings.
+   *
+   * @param prompts The prompts to generate completions for.
+   * @param settings The settings to use for generating completions.
+   * @return completion instance.
+   */
+  def createCompletion(prompts: Seq[String],
+                       settings: CreateCompletionSettings = CreateCompletionSettings()): F[Completion]
 }
 
 object OpenAIClient {

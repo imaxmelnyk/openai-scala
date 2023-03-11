@@ -2,12 +2,14 @@ package dev.maxmelnyk.openaiscala.client
 
 import cats.instances.all.catsStdInstancesForTry
 import dev.maxmelnyk.openaiscala.exceptions.OpenAIClientException
-import dev.maxmelnyk.openaiscala.models.ModelInfo
+import dev.maxmelnyk.openaiscala.models.Completion.Choice
+import dev.maxmelnyk.openaiscala.models.{Completion, ModelInfo, Models}
+import dev.maxmelnyk.openaiscala.models.settings.CreateCompletionSettings
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import sttp.client3.testing.SttpBackendStub
 import sttp.client3.{SttpBackend, Response => SttpResponse}
-import sttp.model.StatusCode
+import sttp.model.{Method, StatusCode}
 import sttp.monad.TryMonad
 
 import java.time.LocalDateTime
@@ -282,6 +284,70 @@ class DefaultOpenAIClientSpec extends AnyFlatSpec with Matchers {
       }
 
     client(sttpBackend).retrieveModel("gpt-3.5-turbo") match {
+      case Failure(_: OpenAIClientException) => succeed
+      case _ => fail()
+    }
+  }
+
+  behavior of "createCompletion"
+
+  it should "succeed" in {
+    val sttpBackend = sttpBackendStub
+      .whenRequestMatches(_.uri.path.endsWith(List("completions")))
+      .thenRespond {
+        val responseBody =
+          """{
+               "id": "cmpl-uqkvlQyYK7bGYrRHQ0eXlWi7",
+               "object": "text_completion",
+               "created": 1589478378,
+               "model": "text-davinci-003",
+               "choices": [
+                 {
+                   "text": "\n\nThis is indeed a test",
+                   "index": 0,
+                   "logprobs": null,
+                   "finish_reason": "length"
+                 }
+               ],
+               "usage": {
+                 "prompt_tokens": 5,
+                 "completion_tokens": 7,
+                 "total_tokens": 12
+               }
+             }"""
+
+        SttpResponse(responseBody, StatusCode.Ok)
+      }
+
+    val prompts = List("Say this is a test")
+    val settings = CreateCompletionSettings(
+      model = Models.textDavinci003,
+      maxTokens = Some(7),
+      temperature = Some(0),
+      topP = Some(1),
+      n = Some(1),
+      stop = Some(List("\n")))
+
+    client(sttpBackend).createCompletion(prompts, settings) match {
+      case Success(completion) =>
+        completion shouldEqual Completion(
+          "cmpl-uqkvlQyYK7bGYrRHQ0eXlWi7",
+          LocalDateTime.of(2020, 5, 14, 17, 46, 18),
+          Models.textDavinci003,
+          List(Completion.Choice("\n\nThis is indeed a test", 0, None, "length")),
+          Completion.Usage(5, 7, 12))
+      case _ => fail()
+    }
+  }
+
+  it should "fail on unexpected response" in {
+    val sttpBackend = sttpBackendStub
+      .whenRequestMatches(_.uri.path.endsWith(List("completions")))
+      .thenRespond {
+        SttpResponse("{}", StatusCode.InternalServerError)
+      }
+
+    client(sttpBackend).createCompletion(List("This gonna fail...")) match {
       case Failure(_: OpenAIClientException) => succeed
       case _ => fail()
     }

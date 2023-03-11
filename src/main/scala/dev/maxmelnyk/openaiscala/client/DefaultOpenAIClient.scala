@@ -4,7 +4,9 @@ import cats.MonadError
 import cats.syntax.all._
 import com.typesafe.scalalogging.LazyLogging
 import dev.maxmelnyk.openaiscala.exceptions.OpenAIClientException
-import dev.maxmelnyk.openaiscala.models.ModelInfo
+import dev.maxmelnyk.openaiscala.models.{Completion, ModelInfo}
+import dev.maxmelnyk.openaiscala.models.settings.CreateCompletionSettings
+import dev.maxmelnyk.openaiscala.utils.BodySerializers._
 import dev.maxmelnyk.openaiscala.utils.JsonImplicits._
 import io.circe.parser.{decode, parse}
 import sttp.client3.{SttpBackend, UriContext, basicRequest}
@@ -94,6 +96,37 @@ private[client] class DefaultOpenAIClient[F[_]](private val apiKey: String,
           case (statusCode, responseBody) =>
             throw OpenAIClientException(
               s"Failed to retrieve $modelId model: " +
+                s"status: $statusCode, " +
+                s"body: ${responseBody.fold(identity, identity)}")
+        }
+      }
+  }
+
+  def createCompletion(prompts: Seq[String],
+                       settings: CreateCompletionSettings = CreateCompletionSettings()): F[Completion] = {
+    logger.debug(s"Creating completion for ${prompts.length} prompts")
+
+    basicRequest
+      .post(uri"$baseUrl/completions")
+      .body((prompts, settings))
+      .headers(defaultHeaders)
+      .send(sttpBackend)
+      .map { response =>
+        (response.code, response.body) match {
+          // success case
+          case (StatusCode.Ok, Right(responseBody)) =>
+            decode[Completion](responseBody) match {
+              case Left(error) =>
+                throw OpenAIClientException(s"Failed to decode response body: $responseBody", error)
+              case Right(completion) =>
+                logger.debug(s"Created completion with ${completion.choices.length} choices")
+                completion
+            }
+
+          // unexpected case
+          case (statusCode, responseBody) =>
+            throw OpenAIClientException(
+              "Failed to create completion: " +
                 s"status: $statusCode, " +
                 s"body: ${responseBody.fold(identity, identity)}")
         }
