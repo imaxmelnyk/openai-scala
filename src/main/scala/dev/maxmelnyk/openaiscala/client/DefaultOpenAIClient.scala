@@ -4,7 +4,7 @@ import cats.MonadError
 import cats.syntax.all._
 import com.typesafe.scalalogging.LazyLogging
 import dev.maxmelnyk.openaiscala.exceptions.OpenAIClientException
-import dev.maxmelnyk.openaiscala.models.Model
+import dev.maxmelnyk.openaiscala.models.ModelInfo
 import dev.maxmelnyk.openaiscala.utils.JsonImplicits._
 import io.circe.parser.{decode, parse}
 import sttp.client3.{SttpBackend, UriContext, basicRequest}
@@ -32,7 +32,7 @@ private[client] class DefaultOpenAIClient[F[_]](private val apiKey: String,
     }
   }
 
-  def listModels: F[Seq[Model]] = {
+  def listModels: F[Seq[ModelInfo]] = {
     logger.debug("Retrieving models")
 
     basicRequest
@@ -48,7 +48,7 @@ private[client] class DefaultOpenAIClient[F[_]](private val apiKey: String,
             }
 
             // the actual models are in "data" field
-            responseBodyJson.hcursor.downField("data").as[List[Model]] match {
+            responseBodyJson.hcursor.downField("data").as[List[ModelInfo]] match {
               case Left(error) =>
                 throw OpenAIClientException(s"Failed to decode response body: $responseBody", error)
               case Right(models) =>
@@ -66,7 +66,7 @@ private[client] class DefaultOpenAIClient[F[_]](private val apiKey: String,
       }
   }
 
-  def retrieveModel(modelId: String): F[Option[Model]] = {
+  def retrieveModel(modelId: String): F[Option[ModelInfo]] = {
     logger.debug(s"Retrieving $modelId model")
 
     basicRequest
@@ -77,7 +77,7 @@ private[client] class DefaultOpenAIClient[F[_]](private val apiKey: String,
         (response.code, response.body) match {
           // success case
           case (StatusCode.Ok, Right(responseBody)) =>
-            decode[Model](responseBody) match {
+            decode[ModelInfo](responseBody) match {
               case Left(error) =>
                 throw OpenAIClientException(s"Failed to decode response body: $responseBody", error)
               case Right(model) =>
