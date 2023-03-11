@@ -5,6 +5,8 @@ lazy val supportedScalaVersions = List(scala212, scala213)
 name := "openai-scala"
 organization := "dev.maxmelnyk"
 
+versionScheme := Some("early-semver")
+
 scalaVersion := scala213
 crossScalaVersions := supportedScalaVersions
 scalacOptions ++= {
