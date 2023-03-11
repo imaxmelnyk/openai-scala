@@ -1,7 +1,7 @@
 package dev.maxmelnyk.openaiscala.client
 
 import cats.MonadError
-import dev.maxmelnyk.openaiscala.config.Config
+import dev.maxmelnyk.openaiscala.config.Configuration
 import dev.maxmelnyk.openaiscala.models.Model
 import sttp.client3.SttpBackend
 
@@ -59,6 +59,6 @@ object OpenAIClient {
    */
   def apply[F[_]](sttpBackend: SttpBackend[F, Any])
                  (implicit monadError: MonadError[F, Throwable]): OpenAIClient[F] = {
-    OpenAIClient(Config.openAiApiKey, Config.openAiOrgId)(sttpBackend)
+    OpenAIClient(Configuration.openAiApiKey, Configuration.openAiOrgId)(sttpBackend)
   }
 }

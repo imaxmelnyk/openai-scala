@@ -7,6 +7,13 @@ organization := "dev.maxmelnyk"
 
 scalaVersion := scala213
 crossScalaVersions := supportedScalaVersions
+scalacOptions ++= {
+  CrossVersion.partialVersion(scalaVersion.value) match {
+    case Some((2, 12)) => List("-language:higherKinds")
+    case _ => List()
+  }
+}
+
 libraryDependencies ++= Dependencies.allDeps
 
 // additional info for public releases
