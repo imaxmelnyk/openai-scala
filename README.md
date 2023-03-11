@@ -59,6 +59,7 @@ Then, in your code:
 ```scala
 import cats.effect.{IO, IOApp}
 import dev.maxmelnyk.openaiscala.client.OpenAIClient
+import dev.maxmelnyk.openaiscala.models.Models
 import sttp.client3.http4s.Http4sBackend
 
 object Main extends IOApp.Simple {
@@ -70,10 +71,12 @@ object Main extends IOApp.Simple {
 
       for {
         models <- client.listModels
-        davinciModel <- client.retrieveModel("davinci")
+        davinciModel <- client.retrieveModel(Models.davinci)
+        completion <- client.createCompletion(Seq("This is a test."))
       } yield {
         println(models)
         println(davinciModel)
+        println(completion)
       }
     }
   }
