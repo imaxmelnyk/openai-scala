@@ -1,24 +1,30 @@
-lazy val scala212 = "2.12.17"
-lazy val scala213 = "2.13.10"
-lazy val supportedScalaVersions = List(scala212, scala213)
-
 name := "openai-scala"
 organization := "dev.maxmelnyk"
 
-versionScheme := Some("early-semver")
+lazy val scala212 = "2.12.17"
+lazy val scala213 = "2.13.10"
+lazy val scala3 = "3.2.2"
+lazy val supportedScalaVersions = List(scala212, scala213, scala3)
 
 scalaVersion := scala213
 crossScalaVersions := supportedScalaVersions
 scalacOptions ++= {
   CrossVersion.partialVersion(scalaVersion.value) match {
     case Some((2, 12)) => List("-language:higherKinds")
-    case _ => List()
+    case _ => List.empty
   }
 }
 
-libraryDependencies ++= Dependencies.allDeps
+libraryDependencies ++= Dependencies.commonDeps
+libraryDependencies ++= {
+  CrossVersion.partialVersion(scalaVersion.value) match {
+    case Some((2, _)) => Dependencies.scala2Deps
+    case _ => List.empty
+  }
+}
 
 // additional info for public releases
+versionScheme := Some("early-semver")
 description := "Scala client for OpenAI API"
 organizationHomepage := Some(url("https://maxmelnyk.dev"))
 homepage := Some(url("https://github.com/imaxmelnyk/openai-scala"))
