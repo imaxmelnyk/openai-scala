@@ -125,7 +125,7 @@ class DefaultOpenAIClientSpec extends AnyFlatSpec with Matchers {
                 isBlocking = false)),
             "davinci",
             None))
-      case _ => fail
+      case _ => fail()
     }
   }
 
@@ -138,7 +138,7 @@ class DefaultOpenAIClientSpec extends AnyFlatSpec with Matchers {
 
     client(sttpBackend).listModels match {
       case Failure(_: OpenAIClientException) => succeed
-      case _ => fail
+      case _ => fail()
     }
   }
 
@@ -151,7 +151,7 @@ class DefaultOpenAIClientSpec extends AnyFlatSpec with Matchers {
 
     client(sttpBackend).listModels match {
       case Failure(_: OpenAIClientException) => succeed
-      case _ => fail
+      case _ => fail()
     }
   }
 
@@ -169,7 +169,7 @@ class DefaultOpenAIClientSpec extends AnyFlatSpec with Matchers {
 
     client(sttpBackend).listModels match {
       case Failure(_: OpenAIClientException) => succeed
-      case _ => fail
+      case _ => fail()
     }
   }
 
@@ -229,7 +229,7 @@ class DefaultOpenAIClientSpec extends AnyFlatSpec with Matchers {
               isBlocking = false)),
           "gpt-3.5-turbo",
           None)
-      case _ => fail
+      case _ => fail()
     }
   }
 
@@ -252,7 +252,7 @@ class DefaultOpenAIClientSpec extends AnyFlatSpec with Matchers {
 
     client(sttpBackend).retrieveModel("gpt-4") match {
       case Success(None) => succeed
-      case _ => fail
+      case _ => fail()
     }
   }
 
@@ -265,7 +265,7 @@ class DefaultOpenAIClientSpec extends AnyFlatSpec with Matchers {
 
     client(sttpBackend).retrieveModel("gpt-3.5-turbo") match {
       case Failure(_: OpenAIClientException) => succeed
-      case _ => fail
+      case _ => fail()
     }
   }
 
@@ -283,7 +283,7 @@ class DefaultOpenAIClientSpec extends AnyFlatSpec with Matchers {
 
     client(sttpBackend).retrieveModel("gpt-3.5-turbo") match {
       case Failure(_: OpenAIClientException) => succeed
-      case _ => fail
+      case _ => fail()
     }
   }
 }

@@ -5,7 +5,7 @@ The library uses [cats effect](https://typelevel.org/cats-effect/docs/getting-st
 and [sttp](https://sttp.softwaremill.com/en/latest/) for http client abstraction.
 
 ## Installation
-The only currently supported Scala version is **2.13**.  
+Currently supported Scala versions are **2.12** and **2.13**.  
 To install the OpenAI Scala Client, add the following dependency to your project's `build.sbt` file:
 ```scala
 "dev.maxmelnyk" %% "openai-scala" % "0.1.0"

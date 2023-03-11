@@ -29,14 +29,14 @@ jobs:
           cache: sbt
 
       - name: Run Tests
-        run: sbt test
+        run: sbt +test
 
       - name: Test Report
         uses: mikepenz/action-junit-report@v3
         if: always()
         with:
           check_name: Test Report
-          report_paths: target/test-reports/TEST-*.xml
+          report_paths: target/test-reports/scala-*/TEST-*.xml
 
       - name: Release
         run: sbt ci-release
