@@ -73,10 +73,12 @@ object Main extends IOApp.Simple {
         models <- client.listModels
         davinciModel <- client.retrieveModel(Models.davinci)
         completion <- client.createCompletion(Seq("This is a test."))
+        chatCompletion <- client.createChatCompletion(Seq(ChatCompletion.Message(ChatCompletion.Message.Role.User, "Hello!")))
       } yield {
         println(models)
         println(davinciModel)
         println(completion)
+        println(chatCompletion)
       }
     }
   }
