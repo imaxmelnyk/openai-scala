@@ -4,8 +4,8 @@ import cats.MonadError
 import cats.syntax.all._
 import com.typesafe.scalalogging.LazyLogging
 import dev.maxmelnyk.openaiscala.exceptions.OpenAIClientException
-import dev.maxmelnyk.openaiscala.models.{Completion, ModelInfo}
-import dev.maxmelnyk.openaiscala.models.settings.CreateCompletionSettings
+import dev.maxmelnyk.openaiscala.models.{ChatCompletion, Completion, ModelInfo}
+import dev.maxmelnyk.openaiscala.models.settings.{CreateChatCompletionSettings, CreateCompletionSettings}
 import dev.maxmelnyk.openaiscala.utils.BodySerializers._
 import dev.maxmelnyk.openaiscala.utils.JsonImplicits._
 import io.circe.parser.{decode, parse}
@@ -127,6 +127,38 @@ private[client] class DefaultOpenAIClient[F[_]](private val apiKey: String,
           case (statusCode, responseBody) =>
             throw OpenAIClientException(
               "Failed to create completion: " +
+                s"status: $statusCode, " +
+                s"body: ${responseBody.fold(identity, identity)}")
+        }
+      }
+  }
+
+  def createChatCompletion(messages: Seq[ChatCompletion.Message],
+                           settings: CreateChatCompletionSettings = CreateChatCompletionSettings()): F[ChatCompletion] = {
+    logger.debug(s"Creating chat completion for ${messages.length} messages")
+
+    basicRequest
+      .post(uri"$baseUrl/chat/completions")
+      .body((messages, settings))
+      .headers(defaultHeaders)
+      .send(sttpBackend)
+      .map { response =>
+        (response.code, response.body) match {
+          // success case
+          case (StatusCode.Ok, Right(responseBody)) =>
+            decode[ChatCompletion](responseBody) match {
+              case Left(error) =>
+                println(error)
+                throw OpenAIClientException(s"Failed to decode response body: $responseBody", error)
+              case Right(chatCompletion) =>
+                logger.debug(s"Created chat completion with ${chatCompletion.choices.length} choices")
+                chatCompletion
+            }
+
+          // unexpected case
+          case (statusCode, responseBody) =>
+            throw OpenAIClientException(
+              "Failed to create chat completion: " +
                 s"status: $statusCode, " +
                 s"body: ${responseBody.fold(identity, identity)}")
         }

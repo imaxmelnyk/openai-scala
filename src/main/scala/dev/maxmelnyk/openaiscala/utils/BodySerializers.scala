@@ -1,6 +1,7 @@
 package dev.maxmelnyk.openaiscala.utils
 
-import dev.maxmelnyk.openaiscala.models.settings.CreateCompletionSettings
+import dev.maxmelnyk.openaiscala.models.ChatCompletion
+import dev.maxmelnyk.openaiscala.models.settings.{CreateChatCompletionSettings, CreateCompletionSettings}
 import dev.maxmelnyk.openaiscala.utils.JsonImplicits._
 import io.circe.syntax._
 import sttp.client3.{BodySerializer, StringBody}
@@ -15,6 +16,17 @@ private[openaiscala] object BodySerializers {
       val bodyJsonString: String = settings
         .asJson
         .deepMerge(Map("prompt" -> prompts).asJson)
+        .dropNullValues
+        .noSpaces
+
+      StringBody(bodyJsonString, StandardCharsets.UTF_8.toString, MediaType.ApplicationJson)
+  }
+
+  implicit val createChatCompletionBodySerializer: BodySerializer[(Seq[ChatCompletion.Message], CreateChatCompletionSettings)] = {
+    case (messages: Seq[ChatCompletion.Message], settings: CreateChatCompletionSettings) =>
+      val bodyJsonString: String = settings
+        .asJson
+        .deepMerge(Map("messages" -> messages).asJson)
         .dropNullValues
         .noSpaces
 
