@@ -2,8 +2,8 @@ package dev.maxmelnyk.openaiscala.client
 
 import cats.MonadError
 import dev.maxmelnyk.openaiscala.config.Configuration
-import dev.maxmelnyk.openaiscala.models.settings.{CreateChatCompletionSettings, CreateCompletionSettings}
-import dev.maxmelnyk.openaiscala.models.{ChatCompletion, Completion, ModelInfo}
+import dev.maxmelnyk.openaiscala.models.settings._
+import dev.maxmelnyk.openaiscala.models._
 import sttp.client3.SttpBackend
 
 /**
@@ -19,7 +19,7 @@ trait OpenAIClient[F[_]] {
    *
    * @return a sequence of models.
    */
-  def listModels: F[Seq[ModelInfo]]
+  def listModels: F[Seq[Model]]
 
   /**
    * Retrieves a model instance.
@@ -29,7 +29,7 @@ trait OpenAIClient[F[_]] {
    * @param modelId The ID of the model to use for this request.
    * @return model instance.
    */
-  def retrieveModel(modelId: String): F[Option[ModelInfo]]
+  def retrieveModel(modelId: String): F[Option[Model]]
 
   /**
    * Creates a completion for the provided prompt and settings.
@@ -50,6 +50,18 @@ trait OpenAIClient[F[_]] {
    */
   def createChatCompletion(messages: Seq[ChatCompletion.Message],
                            settings: CreateChatCompletionSettings = CreateChatCompletionSettings()): F[ChatCompletion]
+
+  /**
+   * Creates a new edit for the provided input, instruction, and settings.
+   *
+   * @param input The input text to use as a starting point for the edit.
+   * @param instruction The instruction that tells the model how to edit the prompt.
+   * @param settings The settings to use for generating edit.
+   * @return edit instance.
+   */
+  def createEdit(input: String,
+                 instruction: String,
+                 settings: CreateEditSettings = CreateEditSettings()): F[Edit]
 }
 
 object OpenAIClient {

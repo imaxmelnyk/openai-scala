@@ -59,7 +59,7 @@ Then, in your code:
 ```scala
 import cats.effect.{IO, IOApp}
 import dev.maxmelnyk.openaiscala.client.OpenAIClient
-import dev.maxmelnyk.openaiscala.models.Models
+import dev.maxmelnyk.openaiscala.models.{ChatCompletion, Models}
 import sttp.client3.http4s.Http4sBackend
 
 object Main extends IOApp.Simple {
@@ -74,11 +74,13 @@ object Main extends IOApp.Simple {
         davinciModel <- client.retrieveModel(Models.davinci)
         completion <- client.createCompletion(Seq("This is a test."))
         chatCompletion <- client.createChatCompletion(Seq(ChatCompletion.Message(ChatCompletion.Message.Role.User, "Hello!")))
+        edit <- client.createEdit("What day of the wek is it?", "Fix the spelling mistakes")
       } yield {
         println(models)
         println(davinciModel)
         println(completion)
         println(chatCompletion)
+        println(edit)
       }
     }
   }
