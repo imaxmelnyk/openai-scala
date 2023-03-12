@@ -4,8 +4,8 @@ import cats.MonadError
 import cats.syntax.all._
 import com.typesafe.scalalogging.LazyLogging
 import dev.maxmelnyk.openaiscala.exceptions.OpenAIClientException
-import dev.maxmelnyk.openaiscala.models.{ChatCompletion, Completion, Model}
-import dev.maxmelnyk.openaiscala.models.settings.{CreateChatCompletionSettings, CreateCompletionSettings}
+import dev.maxmelnyk.openaiscala.models._
+import dev.maxmelnyk.openaiscala.models.settings._
 import dev.maxmelnyk.openaiscala.utils.BodySerializers._
 import dev.maxmelnyk.openaiscala.utils.JsonImplicits._
 import io.circe.parser.{decode, parse}
@@ -148,7 +148,6 @@ private[client] class DefaultOpenAIClient[F[_]](private val apiKey: String,
           case (StatusCode.Ok, Right(responseBody)) =>
             decode[ChatCompletion](responseBody) match {
               case Left(error) =>
-                println(error)
                 throw OpenAIClientException(s"Failed to decode response body: $responseBody", error)
               case Right(chatCompletion) =>
                 logger.debug(s"Created chat completion with ${chatCompletion.choices.length} choices")
@@ -159,6 +158,38 @@ private[client] class DefaultOpenAIClient[F[_]](private val apiKey: String,
           case (statusCode, responseBody) =>
             throw OpenAIClientException(
               "Failed to create chat completion: " +
+                s"status: $statusCode, " +
+                s"body: ${responseBody.fold(identity, identity)}")
+        }
+      }
+  }
+
+  def createEdit(input: String,
+                 instruction: String,
+                 settings: CreateEditSettings = CreateEditSettings()): F[Edit] = {
+    logger.debug(s"Creating edit")
+
+    basicRequest
+      .post(uri"$baseUrl/edits")
+      .body((input, instruction, settings))
+      .headers(defaultHeaders)
+      .send(sttpBackend)
+      .map { response =>
+        (response.code, response.body) match {
+          // success case
+          case (StatusCode.Ok, Right(responseBody)) =>
+            decode[Edit](responseBody) match {
+              case Left(error) =>
+                throw OpenAIClientException(s"Failed to decode response body: $responseBody", error)
+              case Right(edit) =>
+                logger.debug(s"Created edit with ${edit.choices.length} choices")
+                edit
+            }
+
+          // unexpected case
+          case (statusCode, responseBody) =>
+            throw OpenAIClientException(
+              "Failed to create edit: " +
                 s"status: $statusCode, " +
                 s"body: ${responseBody.fold(identity, identity)}")
         }

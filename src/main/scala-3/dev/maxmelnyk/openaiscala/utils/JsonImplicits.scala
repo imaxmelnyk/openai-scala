@@ -1,7 +1,7 @@
 package dev.maxmelnyk.openaiscala.utils
 
-import dev.maxmelnyk.openaiscala.models.settings.{CreateChatCompletionSettings, CreateCompletionSettings}
-import dev.maxmelnyk.openaiscala.models.{ChatCompletion, Completion, Model}
+import dev.maxmelnyk.openaiscala.models.settings._
+import dev.maxmelnyk.openaiscala.models._
 import io.circe.{Decoder, Encoder}
 import io.circe.derivation.{Configuration, ConfiguredDecoder, ConfiguredEncoder}
 
@@ -29,4 +29,11 @@ private[openaiscala] object JsonImplicits extends CommonJsonImplicits {
   implicit val chatCompletionDecoder: Decoder[ChatCompletion] = ConfiguredDecoder.derived
 
   implicit val createChatCompletionSettingsEncoder: Encoder[CreateChatCompletionSettings] = ConfiguredEncoder.derived
+
+  // edits
+  implicit val editChoiceDecoder: Decoder[Edit.Choice] = ConfiguredDecoder.derived
+  implicit val editUsageDecoder: Decoder[Edit.Usage] = ConfiguredDecoder.derived
+  implicit val editDecoder: Decoder[Edit] = ConfiguredDecoder.derived
+
+  implicit val createEditSettingsEncoder: Encoder[CreateEditSettings] = ConfiguredEncoder.derived
 }

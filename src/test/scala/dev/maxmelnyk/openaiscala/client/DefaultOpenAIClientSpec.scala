@@ -2,8 +2,8 @@ package dev.maxmelnyk.openaiscala.client
 
 import cats.instances.all.catsStdInstancesForTry
 import dev.maxmelnyk.openaiscala.exceptions.OpenAIClientException
-import dev.maxmelnyk.openaiscala.models.{ChatCompletion, Completion, Model, Models}
-import dev.maxmelnyk.openaiscala.models.settings.{CreateChatCompletionSettings, CreateCompletionSettings}
+import dev.maxmelnyk.openaiscala.models._
+import dev.maxmelnyk.openaiscala.models.settings._
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import sttp.client3.testing.SttpBackendStub
@@ -29,56 +29,49 @@ class DefaultOpenAIClientSpec extends AnyFlatSpec with Matchers {
         val responseBody =
           """{
                "object": "list",
-               "data": [
-                 {
-                   "id": "gpt-3.5-turbo",
-                   "object": "model",
-                   "created": 1677610602,
-                   "owned_by": "openai",
-                   "permission": [
-                     {
-                       "id": "modelperm-QvbW9EnkbwPtWZuEYnCBAMsO",
-                       "object": "model_permission",
-                       "created": 1678193854,
-                       "allow_create_engine": false,
-                       "allow_sampling": true,
-                       "allow_logprobs": true,
-                       "allow_search_indices": false,
-                       "allow_view": true,
-                       "allow_fine_tuning": false,
-                       "organization": "*",
-                       "group": null,
-                       "is_blocking": false
-                     }
-                   ],
-                   "root": "gpt-3.5-turbo",
-                   "parent": null
-                 },
-                 {
-                   "id": "davinci",
-                   "object": "model",
-                   "created": 1649359874,
-                   "owned_by": "openai",
-                   "permission": [
-                     {
-                       "id": "modelperm-U6ZwlyAd0LyMk4rcMdz33Yc3",
-                       "object": "model_permission",
-                       "created": 1669066355,
-                       "allow_create_engine": false,
-                       "allow_sampling": true,
-                       "allow_logprobs": true,
-                       "allow_search_indices": false,
-                       "allow_view": true,
-                       "allow_fine_tuning": false,
-                       "organization": "*",
-                       "group": null,
-                       "is_blocking": false
-                     }
-                   ],
-                   "root": "davinci",
-                   "parent": null
-                 }
-               ]
+               "data": [{
+                 "id": "gpt-3.5-turbo",
+                 "object": "model",
+                 "created": 1677610602,
+                 "owned_by": "openai",
+                 "permission": [{
+                   "id": "modelperm-QvbW9EnkbwPtWZuEYnCBAMsO",
+                   "object": "model_permission",
+                   "created": 1678193854,
+                   "allow_create_engine": false,
+                   "allow_sampling": true,
+                   "allow_logprobs": true,
+                   "allow_search_indices": false,
+                   "allow_view": true,
+                   "allow_fine_tuning": false,
+                   "organization": "*",
+                   "group": null,
+                   "is_blocking": false
+                 }],
+                 "root": "gpt-3.5-turbo",
+                 "parent": null
+               }, {
+                 "id": "davinci",
+                 "object": "model",
+                 "created": 1649359874,
+                 "owned_by": "openai",
+                 "permission": [{
+                   "id": "modelperm-U6ZwlyAd0LyMk4rcMdz33Yc3",
+                   "object": "model_permission",
+                   "created": 1669066355,
+                   "allow_create_engine": false,
+                   "allow_sampling": true,
+                   "allow_logprobs": true,
+                   "allow_search_indices": false,
+                   "allow_view": true,
+                   "allow_fine_tuning": false,
+                   "organization": "*",
+                   "group": null,
+                   "is_blocking": false
+                 }],
+                 "root": "davinci",
+                 "parent": null
+               }]
              }"""
 
         SttpResponse(responseBody, StatusCode.Ok)
@@ -186,22 +179,20 @@ class DefaultOpenAIClientSpec extends AnyFlatSpec with Matchers {
                "object": "model",
                "created": 1677610602,
                "owned_by": "openai",
-               "permission": [
-                 {
-                   "id": "modelperm-QvbW9EnkbwPtWZuEYnCBAMsO",
-                   "object": "model_permission",
-                   "created": 1678193854,
-                   "allow_create_engine": false,
-                   "allow_sampling": true,
-                   "allow_logprobs": true,
-                   "allow_search_indices": false,
-                   "allow_view": true,
-                   "allow_fine_tuning": false,
-                   "organization": "*",
-                   "group": null,
-                   "is_blocking": false
-                 }
-               ],
+               "permission": [{
+                 "id": "modelperm-QvbW9EnkbwPtWZuEYnCBAMsO",
+                 "object": "model_permission",
+                 "created": 1678193854,
+                 "allow_create_engine": false,
+                 "allow_sampling": true,
+                 "allow_logprobs": true,
+                 "allow_search_indices": false,
+                 "allow_view": true,
+                 "allow_fine_tuning": false,
+                 "organization": "*",
+                 "group": null,
+                 "is_blocking": false
+               }],
                "root": "gpt-3.5-turbo",
                "parent": null
              }"""
@@ -300,14 +291,12 @@ class DefaultOpenAIClientSpec extends AnyFlatSpec with Matchers {
                "object": "text_completion",
                "created": 1589478378,
                "model": "text-davinci-003",
-               "choices": [
-                 {
-                   "text": "\n\nThis is indeed a test",
-                   "index": 0,
-                   "logprobs": null,
-                   "finish_reason": "length"
-                 }
-               ],
+               "choices": [{
+                 "text": "\n\nThis is indeed a test",
+                 "index": 0,
+                 "logprobs": null,
+                 "finish_reason": "length"
+               }],
                "usage": {
                  "prompt_tokens": 5,
                  "completion_tokens": 7,
@@ -405,6 +394,57 @@ class DefaultOpenAIClientSpec extends AnyFlatSpec with Matchers {
       }
 
     client(sttpBackend).createChatCompletion(List(ChatCompletion.Message(ChatCompletion.Message.Role.User, "This gonna fail..."))) match {
+      case Failure(_: OpenAIClientException) => succeed
+      case _ => fail()
+    }
+  }
+
+  behavior of "createEdit"
+
+  it should "succeed" in {
+    val sttpBackend = sttpBackendStub
+      .whenRequestMatches(_.uri.path.endsWith(List("edits")))
+      .thenRespond {
+        val responseBody =
+          """{
+               "object": "edit",
+               "created": 1589478378,
+               "choices": [{
+                 "text": "What day of the week is it?",
+                 "index": 0
+               }],
+               "usage": {
+                 "prompt_tokens": 25,
+                 "completion_tokens": 32,
+                 "total_tokens": 57
+               }
+             }"""
+
+        SttpResponse(responseBody, StatusCode.Ok)
+      }
+
+    val input = "What day of the wek is it?"
+    val instruction = "Fix the spelling mistakes"
+    val settings = CreateEditSettings(model = Models.textDavinciEdit001)
+
+    client(sttpBackend).createEdit(input, instruction, settings) match {
+      case Success(edit) =>
+        edit shouldEqual Edit(
+          LocalDateTime.of(2020, 5, 14, 17, 46, 18),
+          List(Edit.Choice("What day of the week is it?", 0)),
+          Edit.Usage(25, 32, 57))
+      case _ => fail()
+    }
+  }
+
+  it should "fail on unexpected response" in {
+    val sttpBackend = sttpBackendStub
+      .whenRequestMatches(_.uri.path.endsWith(List("edits")))
+      .thenRespond {
+        SttpResponse("{}", StatusCode.InternalServerError)
+      }
+
+    client(sttpBackend).createEdit("this going", "to fail") match {
       case Failure(_: OpenAIClientException) => succeed
       case _ => fail()
     }
