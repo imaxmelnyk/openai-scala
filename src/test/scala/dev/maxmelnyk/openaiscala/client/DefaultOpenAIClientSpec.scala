@@ -2,14 +2,13 @@ package dev.maxmelnyk.openaiscala.client
 
 import cats.instances.all.catsStdInstancesForTry
 import dev.maxmelnyk.openaiscala.exceptions.OpenAIClientException
-import dev.maxmelnyk.openaiscala.models.Completion.Choice
-import dev.maxmelnyk.openaiscala.models.{Completion, ModelInfo, Models}
-import dev.maxmelnyk.openaiscala.models.settings.CreateCompletionSettings
+import dev.maxmelnyk.openaiscala.models.{ChatCompletion, Completion, ModelInfo, Models}
+import dev.maxmelnyk.openaiscala.models.settings.{CreateChatCompletionSettings, CreateCompletionSettings}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import sttp.client3.testing.SttpBackendStub
 import sttp.client3.{SttpBackend, Response => SttpResponse}
-import sttp.model.{Method, StatusCode}
+import sttp.model.StatusCode
 import sttp.monad.TryMonad
 
 import java.time.LocalDateTime
@@ -348,6 +347,64 @@ class DefaultOpenAIClientSpec extends AnyFlatSpec with Matchers {
       }
 
     client(sttpBackend).createCompletion(List("This gonna fail...")) match {
+      case Failure(_: OpenAIClientException) => succeed
+      case _ => fail()
+    }
+  }
+
+  behavior of "createChatCompletion"
+
+  it should "succeed" in {
+    val sttpBackend = sttpBackendStub
+      .whenRequestMatches(_.uri.path.endsWith(List("chat", "completions")))
+      .thenRespond {
+        val responseBody =
+          """{
+               "id": "chatcmpl-123",
+               "object": "chat.completion",
+               "created": 1677652288,
+               "model": "gpt-3.5-turbo-0301",
+               "choices": [{
+                 "index": 0,
+                 "message": {
+                   "role": "assistant",
+                   "content": "\n\nHello there, how may I assist you today?"
+                 },
+                 "finish_reason": "stop"
+               }],
+               "usage": {
+                 "prompt_tokens": 9,
+                 "completion_tokens": 12,
+                 "total_tokens": 21
+               }
+             }"""
+
+        SttpResponse(responseBody, StatusCode.Ok)
+      }
+
+    val messages = List(ChatCompletion.Message(ChatCompletion.Message.Role.User, "Hello!"))
+    val settings = CreateChatCompletionSettings(model = Models.gpt35Turbo)
+
+    client(sttpBackend).createChatCompletion(messages, settings) match {
+      case Success(chatCompletion) =>
+        chatCompletion shouldEqual ChatCompletion(
+          "chatcmpl-123",
+          LocalDateTime.of(2023, 3, 1, 6, 31, 28),
+          Models.gpt35Turbo0301,
+          List(ChatCompletion.Choice(ChatCompletion.Message(ChatCompletion.Message.Role.Assistant, "\n\nHello there, how may I assist you today?"), 0, "stop")),
+          ChatCompletion.Usage(9, 12, 21))
+      case _ => fail()
+    }
+  }
+
+  it should "fail on unexpected response" in {
+    val sttpBackend = sttpBackendStub
+      .whenRequestMatches(_.uri.path.endsWith(List("chat", "completions")))
+      .thenRespond {
+        SttpResponse("{}", StatusCode.InternalServerError)
+      }
+
+    client(sttpBackend).createChatCompletion(List(ChatCompletion.Message(ChatCompletion.Message.Role.User, "This gonna fail..."))) match {
       case Failure(_: OpenAIClientException) => succeed
       case _ => fail()
     }

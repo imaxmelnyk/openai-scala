@@ -2,8 +2,8 @@ package dev.maxmelnyk.openaiscala.client
 
 import cats.MonadError
 import dev.maxmelnyk.openaiscala.config.Configuration
-import dev.maxmelnyk.openaiscala.models.settings.CreateCompletionSettings
-import dev.maxmelnyk.openaiscala.models.{Completion, ModelInfo}
+import dev.maxmelnyk.openaiscala.models.settings.{CreateChatCompletionSettings, CreateCompletionSettings}
+import dev.maxmelnyk.openaiscala.models.{ChatCompletion, Completion, ModelInfo}
 import sttp.client3.SttpBackend
 
 /**
@@ -40,6 +40,16 @@ trait OpenAIClient[F[_]] {
    */
   def createCompletion(prompts: Seq[String],
                        settings: CreateCompletionSettings = CreateCompletionSettings()): F[Completion]
+
+  /**
+   * Creates a completion for the chat messages.
+   *
+   * @param messages The messages to generate chat completions for.
+   * @param settings The settings to use for generating chat completions.
+   * @return chat completion instance.
+   */
+  def createChatCompletion(messages: Seq[ChatCompletion.Message],
+                           settings: CreateChatCompletionSettings = CreateChatCompletionSettings()): F[ChatCompletion]
 }
 
 object OpenAIClient {

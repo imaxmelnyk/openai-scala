@@ -13,13 +13,18 @@ object Dependencies {
 
   private val cats = Seq("org.typelevel" %% "cats-effect" % "3.4.8")
 
-  private val sttp = Seq("com.softwaremill.sttp.client3" %% "core" % "3.8.12")
+  private val sttp = Seq("com.softwaremill.sttp.client3" %% "core" % "3.8.13")
+
+  private val enumeratumVersion = "1.7.2"
+  private val enumeratum = Seq(
+    "com.beachape" %% "enumeratum" % enumeratumVersion,
+    "com.beachape" %% "enumeratum-circe" % enumeratumVersion)
 
   private val test = Seq(
     "org.scalatest" %% "scalatest" % "3.2.15" % Test,
     "com.vladsch.flexmark" % "flexmark-all" % "0.64.0" % Test)
 
-  val commonDeps: Seq[ModuleID] = config ++ logging ++ circe ++ cats ++ sttp ++ test
+  val commonDeps: Seq[ModuleID] = config ++ logging ++ circe ++ cats ++ sttp ++ enumeratum ++ test
 
   // deps dedicated to scala 2.x versions
   val scala2Deps: Seq[ModuleID] = Seq(
