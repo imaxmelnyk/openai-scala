@@ -1,7 +1,7 @@
 package dev.maxmelnyk.openaiscala.utils
 
 import dev.maxmelnyk.openaiscala.models.settings.{CreateChatCompletionSettings, CreateCompletionSettings}
-import dev.maxmelnyk.openaiscala.models.{ChatCompletion, Completion, ModelInfo}
+import dev.maxmelnyk.openaiscala.models.{ChatCompletion, Completion, Model}
 import io.circe.{Decoder, Encoder}
 import io.circe.derivation.{Configuration, ConfiguredDecoder, ConfiguredEncoder}
 
@@ -9,8 +9,8 @@ private[openaiscala] object JsonImplicits extends CommonJsonImplicits {
   private implicit val config: Configuration = Configuration.default.withSnakeCaseMemberNames
 
   // models
-  implicit val modelPermissionDecoder: Decoder[ModelInfo.Permission] = ConfiguredDecoder.derived
-  implicit val modelDecoder: Decoder[ModelInfo] = ConfiguredDecoder.derived
+  implicit val modelPermissionDecoder: Decoder[Model.Permission] = ConfiguredDecoder.derived
+  implicit val modelDecoder: Decoder[Model] = ConfiguredDecoder.derived
 
   // completions
   implicit val completionChoiceLogprobsDecoder: Decoder[Completion.Choice.Logprobs] = ConfiguredDecoder.derived

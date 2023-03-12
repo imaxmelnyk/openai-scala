@@ -5,14 +5,14 @@ import java.time.LocalDateTime
 /**
  * [[https://platform.openai.com/docs/api-reference/models]]
  */
-case class ModelInfo(id: String,
-                     created: LocalDateTime,
-                     ownedBy: String,
-                     permission: Seq[ModelInfo.Permission],
-                     root: String,
-                     parent: Option[String])
+case class Model(id: String,
+                 created: LocalDateTime,
+                 ownedBy: String,
+                 permission: Seq[Model.Permission],
+                 root: String,
+                 parent: Option[String])
 
-object ModelInfo {
+object Model {
   case class Permission(id: String,
                         created: LocalDateTime,
                         allowCreateEngine: Boolean,

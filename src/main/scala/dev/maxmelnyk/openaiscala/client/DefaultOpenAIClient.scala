@@ -4,7 +4,7 @@ import cats.MonadError
 import cats.syntax.all._
 import com.typesafe.scalalogging.LazyLogging
 import dev.maxmelnyk.openaiscala.exceptions.OpenAIClientException
-import dev.maxmelnyk.openaiscala.models.{ChatCompletion, Completion, ModelInfo}
+import dev.maxmelnyk.openaiscala.models.{ChatCompletion, Completion, Model}
 import dev.maxmelnyk.openaiscala.models.settings.{CreateChatCompletionSettings, CreateCompletionSettings}
 import dev.maxmelnyk.openaiscala.utils.BodySerializers._
 import dev.maxmelnyk.openaiscala.utils.JsonImplicits._
@@ -34,7 +34,7 @@ private[client] class DefaultOpenAIClient[F[_]](private val apiKey: String,
     }
   }
 
-  def listModels: F[Seq[ModelInfo]] = {
+  def listModels: F[Seq[Model]] = {
     logger.debug("Retrieving models")
 
     basicRequest
@@ -50,7 +50,7 @@ private[client] class DefaultOpenAIClient[F[_]](private val apiKey: String,
             }
 
             // the actual models are in "data" field
-            responseBodyJson.hcursor.downField("data").as[List[ModelInfo]] match {
+            responseBodyJson.hcursor.downField("data").as[List[Model]] match {
               case Left(error) =>
                 throw OpenAIClientException(s"Failed to decode response body: $responseBody", error)
               case Right(models) =>
@@ -68,7 +68,7 @@ private[client] class DefaultOpenAIClient[F[_]](private val apiKey: String,
       }
   }
 
-  def retrieveModel(modelId: String): F[Option[ModelInfo]] = {
+  def retrieveModel(modelId: String): F[Option[Model]] = {
     logger.debug(s"Retrieving $modelId model")
 
     basicRequest
@@ -79,7 +79,7 @@ private[client] class DefaultOpenAIClient[F[_]](private val apiKey: String,
         (response.code, response.body) match {
           // success case
           case (StatusCode.Ok, Right(responseBody)) =>
-            decode[ModelInfo](responseBody) match {
+            decode[Model](responseBody) match {
               case Left(error) =>
                 throw OpenAIClientException(s"Failed to decode response body: $responseBody", error)
               case Right(model) =>
