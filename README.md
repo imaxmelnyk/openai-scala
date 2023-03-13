@@ -1,7 +1,7 @@
 # OpenAI Scala Client
 The OpenAI Scala Client is a library that provides a Scala interface to the [OpenAI API](https://platform.openai.com/docs),
 allowing you to programmatically interact with OpenAI's artificial intelligence models.
-The library uses [cats effect](https://typelevel.org/cats-effect/docs/getting-started) for generic monads
+The library uses [cats](https://typelevel.org/cats/) for generic monads
 and [sttp](https://sttp.softwaremill.com/en/latest/) for http client abstraction.
 
 ## Installation
@@ -42,11 +42,14 @@ val sttpBackend = ???
 
 val client = OpenAIClient(sttpBackend)
 ```
-Please note that the [cats effect](https://typelevel.org/cats-effect/docs/getting-started)'s `MonadError[F, Throwable]` for the monad `F` used in `sttpBackend` must be implicitly in scope.
+Please note that the [cats](https://typelevel.org/cats/)'s `MonadError[F, Throwable]` for the monad `F` used in `sttpBackend` must be implicitly in scope.
 
 ### Example with [cats effect](https://typelevel.org/cats-effect/docs/getting-started) `IO` monad and [http4s](https://github.com/http4s/http4s) as [sttp](https://sttp.softwaremill.com/en/latest/) backend
 First, make sure you have the following dependencies:
 ```scala
+// cats effect
+"org.typelevel" %% "cats-effect" % "<cats_effect_version>"
+
 // http4s client
 "org.http4s" %% "http4s-dsl" % "<http4s_version>"
 "org.http4s" %% "http4s-blaze-client" % "<http4s_version>"
