@@ -1,7 +1,9 @@
 package dev.maxmelnyk.openaiscala.utils
 
-import dev.maxmelnyk.openaiscala.models.settings._
+import cats.syntax.functor.toFunctorOps
 import dev.maxmelnyk.openaiscala.models._
+import dev.maxmelnyk.openaiscala.models.images.{Image, ImageSettings}
+import dev.maxmelnyk.openaiscala.models.settings._
 import io.circe.{Decoder, Encoder}
 import io.circe.derivation.{Configuration, ConfiguredDecoder, ConfiguredEncoder}
 
@@ -36,4 +38,21 @@ private[openaiscala] object JsonImplicits extends CommonJsonImplicits {
   implicit val editDecoder: Decoder[Edit] = ConfiguredDecoder.derived
 
   implicit val createEditSettingsEncoder: Encoder[CreateEditSettings] = ConfiguredEncoder.derived
+
+  // images
+  implicit val imageSettingsEncoder: Encoder[ImageSettings] = ConfiguredEncoder.derived
+
+  implicit val imageDataDecoder: Decoder[Image.ImageData] = {
+    val urlImageDataDecoder: Decoder[Image.UrlImageData] = ConfiguredDecoder.derived
+    val base64JsonImageDataDecoder: Decoder[Image.Base64JsonImageData] = ConfiguredDecoder.derived
+
+    // should contain all implementations of the base class
+    val decoders: List[Decoder[Image.ImageData]] = List(
+      urlImageDataDecoder.widen,
+      base64JsonImageDataDecoder.widen)
+
+    decoders.reduceLeft(_ or _)
+  }
+
+  implicit val imageDecoder: Decoder[Image] = ConfiguredDecoder.derived
 }
