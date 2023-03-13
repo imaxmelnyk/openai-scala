@@ -2,8 +2,10 @@ package dev.maxmelnyk.openaiscala.client
 
 import cats.MonadError
 import dev.maxmelnyk.openaiscala.config.Configuration
-import dev.maxmelnyk.openaiscala.models.settings._
-import dev.maxmelnyk.openaiscala.models._
+import dev.maxmelnyk.openaiscala.models.models._
+import dev.maxmelnyk.openaiscala.models.text.completions._
+import dev.maxmelnyk.openaiscala.models.text.completions.chat._
+import dev.maxmelnyk.openaiscala.models.text.edits._
 import sttp.client3.SttpBackend
 
 /**
@@ -39,7 +41,7 @@ trait OpenAIClient[F[_]] {
    * @return completion instance.
    */
   def createCompletion(prompts: Seq[String],
-                       settings: CreateCompletionSettings = CreateCompletionSettings()): F[Completion]
+                       settings: CompletionSettings = CompletionSettings()): F[Completion]
 
   /**
    * Creates a completion for the chat messages.
@@ -49,7 +51,7 @@ trait OpenAIClient[F[_]] {
    * @return chat completion instance.
    */
   def createChatCompletion(messages: Seq[ChatCompletion.Message],
-                           settings: CreateChatCompletionSettings = CreateChatCompletionSettings()): F[ChatCompletion]
+                           settings: ChatCompletionSettings = ChatCompletionSettings()): F[ChatCompletion]
 
   /**
    * Creates a new edit for the provided input, instruction, and settings.
@@ -61,7 +63,7 @@ trait OpenAIClient[F[_]] {
    */
   def createEdit(input: String,
                  instruction: String,
-                 settings: CreateEditSettings = CreateEditSettings()): F[Edit]
+                 settings: EditSettings = EditSettings()): F[Edit]
 }
 
 object OpenAIClient {

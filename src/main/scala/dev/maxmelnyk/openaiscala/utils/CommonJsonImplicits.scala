@@ -1,7 +1,7 @@
 package dev.maxmelnyk.openaiscala.utils
 
-import dev.maxmelnyk.openaiscala.models.ChatCompletion
 import dev.maxmelnyk.openaiscala.models.images.ImageSettings
+import dev.maxmelnyk.openaiscala.models.text.completions.chat.ChatCompletion
 import enumeratum.Circe
 import io.circe.{Decoder, Encoder}
 

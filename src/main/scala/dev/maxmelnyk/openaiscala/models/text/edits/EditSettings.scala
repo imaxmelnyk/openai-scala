@@ -1,9 +1,9 @@
-package dev.maxmelnyk.openaiscala.models.settings
+package dev.maxmelnyk.openaiscala.models.text.edits
 
-import dev.maxmelnyk.openaiscala.models.Models
+import dev.maxmelnyk.openaiscala.models.models.Models
 
 /**
- * [[https://platform.openai.com/docs/api-reference/edits/create]]
+ * [[https://platform.openai.com/docs/api-reference/edits]]
  *
  * @param model ID of the model to use.
  * @param n How many edits to generate for the input and instruction.
@@ -16,7 +16,7 @@ import dev.maxmelnyk.openaiscala.models.Models
  *             So 0.1 means only the tokens comprising the top 10% probability mass are considered.
  *             We generally recommend altering this or [[temperature]] but not both.
  */
-case class CreateEditSettings(model: String = Models.textDavinciEdit001,
-                              n: Option[Long] = None,
-                              temperature: Option[Double] = None,
-                              topP: Option[Double] = None)
+case class EditSettings(model: String = Models.textDavinciEdit001,
+                        n: Option[Long] = None,
+                        temperature: Option[Double] = None,
+                        topP: Option[Double] = None)

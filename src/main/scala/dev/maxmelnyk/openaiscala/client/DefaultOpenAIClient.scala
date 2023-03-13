@@ -4,8 +4,13 @@ import cats.MonadError
 import cats.syntax.all._
 import com.typesafe.scalalogging.LazyLogging
 import dev.maxmelnyk.openaiscala.exceptions.OpenAIClientException
-import dev.maxmelnyk.openaiscala.models._
-import dev.maxmelnyk.openaiscala.models.settings._
+import dev.maxmelnyk.openaiscala.models.models._
+import dev.maxmelnyk.openaiscala.models.text.completions._
+import dev.maxmelnyk.openaiscala.models.text.completions.chat._
+import dev.maxmelnyk.openaiscala.models.text.completions.chat.requests._
+import dev.maxmelnyk.openaiscala.models.text.completions.requests._
+import dev.maxmelnyk.openaiscala.models.text.edits._
+import dev.maxmelnyk.openaiscala.models.text.edits.requests._
 import dev.maxmelnyk.openaiscala.utils.BodySerializers._
 import dev.maxmelnyk.openaiscala.utils.JsonImplicits._
 import io.circe.parser.{decode, parse}
@@ -103,12 +108,12 @@ private[client] class DefaultOpenAIClient[F[_]](private val apiKey: String,
   }
 
   def createCompletion(prompts: Seq[String],
-                       settings: CreateCompletionSettings = CreateCompletionSettings()): F[Completion] = {
+                       settings: CompletionSettings = CompletionSettings()): F[Completion] = {
     logger.debug(s"Creating completion for ${prompts.length} prompts")
 
     basicRequest
       .post(uri"$baseUrl/completions")
-      .body((prompts, settings))
+      .body(CreateCompletionRequest(prompts, settings))
       .headers(defaultHeaders)
       .send(sttpBackend)
       .map { response =>
@@ -134,12 +139,12 @@ private[client] class DefaultOpenAIClient[F[_]](private val apiKey: String,
   }
 
   def createChatCompletion(messages: Seq[ChatCompletion.Message],
-                           settings: CreateChatCompletionSettings = CreateChatCompletionSettings()): F[ChatCompletion] = {
+                           settings: ChatCompletionSettings = ChatCompletionSettings()): F[ChatCompletion] = {
     logger.debug(s"Creating chat completion for ${messages.length} messages")
 
     basicRequest
       .post(uri"$baseUrl/chat/completions")
-      .body((messages, settings))
+      .body(CreateChatCompletionRequest(messages, settings))
       .headers(defaultHeaders)
       .send(sttpBackend)
       .map { response =>
@@ -166,12 +171,12 @@ private[client] class DefaultOpenAIClient[F[_]](private val apiKey: String,
 
   def createEdit(input: String,
                  instruction: String,
-                 settings: CreateEditSettings = CreateEditSettings()): F[Edit] = {
+                 settings: EditSettings = EditSettings()): F[Edit] = {
     logger.debug(s"Creating edit")
 
     basicRequest
       .post(uri"$baseUrl/edits")
-      .body((input, instruction, settings))
+      .body(CreateEditRequest(input, instruction, settings))
       .headers(defaultHeaders)
       .send(sttpBackend)
       .map { response =>

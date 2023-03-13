@@ -1,4 +1,4 @@
-package dev.maxmelnyk.openaiscala.models
+package dev.maxmelnyk.openaiscala.models.text.completions.chat
 
 import enumeratum.EnumEntry.Snakecase
 import enumeratum.{Enum, EnumEntry}
@@ -6,7 +6,7 @@ import enumeratum.{Enum, EnumEntry}
 import java.time.LocalDateTime
 
 /**
- * [[https://platform.openai.com/docs/api-reference/chat/create]]
+ * [[https://platform.openai.com/docs/api-reference/chat]]
  */
 case class ChatCompletion(id: String,
                           created: LocalDateTime,
