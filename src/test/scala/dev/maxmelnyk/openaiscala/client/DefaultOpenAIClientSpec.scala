@@ -2,8 +2,10 @@ package dev.maxmelnyk.openaiscala.client
 
 import cats.instances.all.catsStdInstancesForTry
 import dev.maxmelnyk.openaiscala.exceptions.OpenAIClientException
-import dev.maxmelnyk.openaiscala.models._
-import dev.maxmelnyk.openaiscala.models.settings._
+import dev.maxmelnyk.openaiscala.models.models._
+import dev.maxmelnyk.openaiscala.models.text.completions._
+import dev.maxmelnyk.openaiscala.models.text.completions.chat._
+import dev.maxmelnyk.openaiscala.models.text.edits._
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import sttp.client3.testing.SttpBackendStub
@@ -308,7 +310,7 @@ class DefaultOpenAIClientSpec extends AnyFlatSpec with Matchers {
       }
 
     val prompts = List("Say this is a test")
-    val settings = CreateCompletionSettings(
+    val settings = CompletionSettings(
       model = Models.textDavinci003,
       maxTokens = Some(7),
       temperature = Some(0),
@@ -372,7 +374,7 @@ class DefaultOpenAIClientSpec extends AnyFlatSpec with Matchers {
       }
 
     val messages = List(ChatCompletion.Message(ChatCompletion.Message.Role.User, "Hello!"))
-    val settings = CreateChatCompletionSettings(model = Models.gpt35Turbo)
+    val settings = ChatCompletionSettings(model = Models.gpt35Turbo)
 
     client(sttpBackend).createChatCompletion(messages, settings) match {
       case Success(chatCompletion) =>
@@ -425,7 +427,7 @@ class DefaultOpenAIClientSpec extends AnyFlatSpec with Matchers {
 
     val input = "What day of the wek is it?"
     val instruction = "Fix the spelling mistakes"
-    val settings = CreateEditSettings(model = Models.textDavinciEdit001)
+    val settings = EditSettings(model = Models.textDavinciEdit001)
 
     client(sttpBackend).createEdit(input, instruction, settings) match {
       case Success(edit) =>

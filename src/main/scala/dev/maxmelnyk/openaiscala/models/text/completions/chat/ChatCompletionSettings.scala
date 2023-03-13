@@ -1,9 +1,9 @@
-package dev.maxmelnyk.openaiscala.models.settings
+package dev.maxmelnyk.openaiscala.models.text.completions.chat
 
-import dev.maxmelnyk.openaiscala.models.Models
+import dev.maxmelnyk.openaiscala.models.models.Models
 
 /**
- * [[https://platform.openai.com/docs/api-reference/chat/create]]
+ * [[https://platform.openai.com/docs/api-reference/chat]]
  *
  * @param model ID of the model to use.
  * @param temperature What sampling temperature to use, between 0 and 2.
@@ -31,13 +31,13 @@ import dev.maxmelnyk.openaiscala.models.Models
  *                  values like -100 or 100 should result in a ban or exclusive selection of the relevant token.
  * @param user A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.
  */
-case class CreateChatCompletionSettings(model: String = Models.gpt35Turbo,
-                                        temperature: Option[Double] = None,
-                                        topP: Option[Double] = None,
-                                        n: Option[Long] = None,
-                                        stop: Option[Seq[String]] = None,
-                                        maxTokens: Option[Long] = None,
-                                        presencePenalty: Option[Double] = None,
-                                        frequencyPenalty: Option[Double] = None,
-                                        logitBias: Option[Map[String, Long]] = None,
-                                        user: Option[String] = None)
+case class ChatCompletionSettings(model: String = Models.gpt35Turbo,
+                                  temperature: Option[Double] = None,
+                                  topP: Option[Double] = None,
+                                  n: Option[Long] = None,
+                                  stop: Option[Seq[String]] = None,
+                                  maxTokens: Option[Long] = None,
+                                  presencePenalty: Option[Double] = None,
+                                  frequencyPenalty: Option[Double] = None,
+                                  logitBias: Option[Map[String, Long]] = None,
+                                  user: Option[String] = None)

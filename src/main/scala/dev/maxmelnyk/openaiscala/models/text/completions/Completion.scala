@@ -1,4 +1,4 @@
-package dev.maxmelnyk.openaiscala.models
+package dev.maxmelnyk.openaiscala.models.text.completions
 
 import java.time.LocalDateTime
 

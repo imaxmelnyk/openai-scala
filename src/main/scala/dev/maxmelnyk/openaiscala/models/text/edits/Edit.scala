@@ -1,9 +1,9 @@
-package dev.maxmelnyk.openaiscala.models
+package dev.maxmelnyk.openaiscala.models.text.edits
 
 import java.time.LocalDateTime
 
 /**
- * [[https://platform.openai.com/docs/api-reference/edits/create]]
+ * [[https://platform.openai.com/docs/api-reference/edits]]
  */
 case class Edit(created: LocalDateTime,
                 choices: Seq[Edit.Choice],

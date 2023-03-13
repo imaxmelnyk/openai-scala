@@ -1,4 +1,4 @@
-package dev.maxmelnyk.openaiscala.models
+package dev.maxmelnyk.openaiscala.models.models
 
 import java.time.LocalDateTime
 

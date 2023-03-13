@@ -1,9 +1,9 @@
-package dev.maxmelnyk.openaiscala.models.settings
+package dev.maxmelnyk.openaiscala.models.text.completions
 
-import dev.maxmelnyk.openaiscala.models.Models
+import dev.maxmelnyk.openaiscala.models.models.Models
 
 /**
- * [[https://platform.openai.com/docs/api-reference/completions/create]]
+ * [[https://platform.openai.com/docs/api-reference/completions]]
  *
  * @param model ID of the model to use.
  * @param suffix The suffix that comes after a completion of inserted text.
@@ -49,17 +49,17 @@ import dev.maxmelnyk.openaiscala.models.Models
  *                  As an example, you can pass `Some(Map("50256" -> -100))` to prevent the `<|endoftext|>` token from being generated.
  * @param user A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.
  */
-case class CreateCompletionSettings(model: String = Models.textDavinci003,
-                                    suffix: Option[String] = None,
-                                    maxTokens: Option[Long] = None,
-                                    temperature: Option[Double] = None,
-                                    topP: Option[Double] = None,
-                                    n: Option[Long] = None,
-                                    logprobs: Option[Long] = None,
-                                    echo: Option[Boolean] = None,
-                                    stop: Option[Seq[String]] = None,
-                                    presencePenalty: Option[Double] = None,
-                                    frequencyPenalty: Option[Double] = None,
-                                    bestOf: Option[Long] = None,
-                                    logitBias: Option[Map[String, Long]] = None,
-                                    user: Option[String] = None)
+case class CompletionSettings(model: String = Models.textDavinci003,
+                              suffix: Option[String] = None,
+                              maxTokens: Option[Long] = None,
+                              temperature: Option[Double] = None,
+                              topP: Option[Double] = None,
+                              n: Option[Long] = None,
+                              logprobs: Option[Long] = None,
+                              echo: Option[Boolean] = None,
+                              stop: Option[Seq[String]] = None,
+                              presencePenalty: Option[Double] = None,
+                              frequencyPenalty: Option[Double] = None,
+                              bestOf: Option[Long] = None,
+                              logitBias: Option[Map[String, Long]] = None,
+                              user: Option[String] = None)

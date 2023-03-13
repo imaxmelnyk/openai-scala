@@ -8,6 +8,8 @@ lazy val supportedScalaVersions = List(scala212, scala213, scala3)
 
 scalaVersion := scala213
 crossScalaVersions := supportedScalaVersions
+
+scalacOptions ++= List("-language:implicitConversions")
 scalacOptions ++= {
   CrossVersion.partialVersion(scalaVersion.value) match {
     case Some((2, 12)) => List("-language:higherKinds")
