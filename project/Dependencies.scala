@@ -11,7 +11,7 @@ object Dependencies {
     "io.circe" %% "circe-parser" % circeVersion,
     "io.circe" %% "circe-generic" % circeVersion)
 
-  private val cats = Seq("org.typelevel" %% "cats-effect" % "3.4.8")
+  private val cats = Seq("org.typelevel" %% "cats-core" % "2.9.0")
 
   private val sttp = Seq("com.softwaremill.sttp.client3" %% "core" % "3.8.13")
 

@@ -1,7 +1,7 @@
 package dev.maxmelnyk.openaiscala.client
 
 import cats.MonadError
-import cats.syntax.all._
+import cats.syntax.all.toFunctorOps
 import com.typesafe.scalalogging.LazyLogging
 import dev.maxmelnyk.openaiscala.exceptions.OpenAIClientException
 import dev.maxmelnyk.openaiscala.models.models._

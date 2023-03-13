@@ -12,7 +12,7 @@ crossScalaVersions := supportedScalaVersions
 scalacOptions ++= List("-language:implicitConversions")
 scalacOptions ++= {
   CrossVersion.partialVersion(scalaVersion.value) match {
-    case Some((2, 12)) => List("-language:higherKinds")
+    case Some((2, 12)) => List("-language:higherKinds", "-Ypartial-unification")
     case _ => List.empty
   }
 }
