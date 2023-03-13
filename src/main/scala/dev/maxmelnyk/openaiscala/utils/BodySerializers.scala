@@ -14,7 +14,8 @@ import sttp.model.{MediaType, Part}
 import java.nio.charset.StandardCharsets
 
 private[openaiscala] object BodySerializers {
-  // Test stuff
+
+  // Text stuff
 
   implicit val createCompletionBodySerializer: BodySerializer[CreateCompletionRequest] = {
     case CreateCompletionRequest(prompts, settings) =>
