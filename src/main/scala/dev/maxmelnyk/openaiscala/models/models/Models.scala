@@ -5,6 +5,12 @@ package dev.maxmelnyk.openaiscala.models.models
  * [[https://platform.openai.com/docs/models]]
  */
 object Models {
+  // GPT-4
+  val gpt4 = "gpt-4"
+  val gpt4_0314 = "gpt-4-0314"
+  val gpt4_32k = "gpt-4-32k"
+  val gpt4_32k_0314 = "gpt-4-32k-0314"
+
   // GPT-3.5
   val gpt35Turbo = "gpt-3.5-turbo"
   val gpt35Turbo0301 = "gpt-3.5-turbo-0301"

@@ -8,7 +8,7 @@ and [sttp](https://sttp.softwaremill.com/en/latest/) for http client abstraction
 Currently supported Scala versions are **2.12**, **2.13** and **3**.  
 To install the OpenAI Scala Client, add the following dependency to your project's `build.sbt` file:
 ```scala
-"dev.maxmelnyk" %% "openai-scala" % "0.2.0"
+"dev.maxmelnyk" %% "openai-scala" % "0.3.0"
 ```
 
 ## Getting Started
