@@ -2,11 +2,14 @@ package dev.maxmelnyk.openaiscala.client
 
 import cats.MonadError
 import dev.maxmelnyk.openaiscala.config.Configuration
+import dev.maxmelnyk.openaiscala.models.images._
 import dev.maxmelnyk.openaiscala.models.models._
 import dev.maxmelnyk.openaiscala.models.text.completions._
 import dev.maxmelnyk.openaiscala.models.text.completions.chat._
 import dev.maxmelnyk.openaiscala.models.text.edits._
 import sttp.client3.SttpBackend
+
+import java.io.File
 
 /**
  * OpenAI API client.
@@ -64,6 +67,42 @@ trait OpenAIClient[F[_]] {
   def createEdit(input: String,
                  instruction: String,
                  settings: EditSettings = EditSettings()): F[Edit]
+
+  /**
+   * Creates an image given a prompt.
+   *
+   * @param prompt A text description of the desired image(s). The maximum length is 1000 characters.
+   * @param settings The settings to use for creating images.
+   * @return image instance.
+   */
+  def createImage(prompt: String,
+                  settings: ImageSettings = ImageSettings()): F[Image]
+
+  /**
+   * Creates an edited or extended image given an original image and a prompt.
+   *
+   * @param image The image to edit. Must be a valid PNG file, less than 4MB, and square.
+   *              If mask is not provided, image must have transparency, which will be used as the mask.
+   * @param mask An additional image whose fully transparent areas (e.g. where alpha is zero) indicate where image should be edited.
+   *             Must be a valid PNG file, less than 4MB, and have the same dimensions as image.
+   * @param prompt A text description of the desired image(s). The maximum length is 1000 characters.
+   * @param settings The settings to use for editing images.
+   * @return image instance.
+   */
+  def createImageEdit(image: File,
+                      mask: Option[File],
+                      prompt: String,
+                      settings: ImageSettings = ImageSettings()): F[Image]
+
+  /**
+   *
+   * @param image The image to use as the basis for the variation(s).
+   *              Must be a valid PNG file, less than 4MB, and square.
+   * @param settings The settings to use for creating image variations.
+   * @return image instance.
+   */
+  def createImageVariation(image: File,
+                           settings: ImageSettings = ImageSettings()): F[Image]
 }
 
 object OpenAIClient {

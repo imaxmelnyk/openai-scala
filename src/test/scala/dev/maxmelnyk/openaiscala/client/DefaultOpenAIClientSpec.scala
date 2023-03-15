@@ -2,6 +2,7 @@ package dev.maxmelnyk.openaiscala.client
 
 import cats.instances.all.catsStdInstancesForTry
 import dev.maxmelnyk.openaiscala.exceptions.OpenAIClientException
+import dev.maxmelnyk.openaiscala.models.images._
 import dev.maxmelnyk.openaiscala.models.models._
 import dev.maxmelnyk.openaiscala.models.text.completions._
 import dev.maxmelnyk.openaiscala.models.text.completions.chat._
@@ -9,10 +10,11 @@ import dev.maxmelnyk.openaiscala.models.text.edits._
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import sttp.client3.testing.SttpBackendStub
-import sttp.client3.{SttpBackend, Response => SttpResponse}
-import sttp.model.StatusCode
+import sttp.client3.{FileBody, MultipartBody, StringBody, SttpBackend, Response => SttpResponse}
+import sttp.model.{Part, StatusCode}
 import sttp.monad.TryMonad
 
+import java.io.File
 import java.time.LocalDateTime
 import scala.util.{Failure, Success, Try}
 
@@ -450,5 +452,236 @@ class DefaultOpenAIClientSpec extends AnyFlatSpec with Matchers {
       case Failure(_: OpenAIClientException) => succeed
       case _ => fail()
     }
+  }
+
+  behavior of "createImage"
+
+  it should "succeed for url image" in {
+    val sttpBackend = sttpBackendStub
+      .whenRequestMatches(_.uri.path.endsWith(List("images", "generations")))
+      .thenRespond {
+        val responseBody =
+          """{
+               "created": 1589478378,
+               "data": [{
+                 "url": "https://some.url/image1"
+               }, {
+                 "url": "https://some.url/image2"
+               }]
+             }"""
+
+        SttpResponse(responseBody, StatusCode.Ok)
+      }
+
+    val prompt = "A cute baby sea otter"
+    val settings = ImageSettings(n = Some(2), responseFormat = Some(ImageSettings.ResponseFormat.Url))
+
+    client(sttpBackend).createImage(prompt, settings) match {
+      case Success(image) =>
+        image shouldEqual Image(
+          LocalDateTime.of(2020, 5, 14, 17, 46, 18),
+          List(
+            Image.UrlImageData("https://some.url/image1"),
+            Image.UrlImageData("https://some.url/image2")))
+      case _ => fail()
+    }
+  }
+
+  it should "succeed for base64 json image" in {
+    val sttpBackend = sttpBackendStub
+      .whenRequestMatches(_.uri.path.endsWith(List("images", "generations")))
+      .thenRespond {
+        val responseBody =
+          """{
+               "created": 1589478378,
+               "data": [{
+                 "b64_json": "somesymbols1"
+               }, {
+                 "b64_json": "somesymbols2"
+               }]
+             }"""
+
+        SttpResponse(responseBody, StatusCode.Ok)
+      }
+
+    val prompt = "A cute baby sea otter"
+    val settings = ImageSettings(n = Some(2), responseFormat = Some(ImageSettings.ResponseFormat.Base64Json))
+
+    client(sttpBackend).createImage(prompt, settings) match {
+      case Success(image) =>
+        image shouldEqual Image(
+          LocalDateTime.of(2020, 5, 14, 17, 46, 18),
+          List(
+            Image.Base64JsonImageData("somesymbols1"),
+            Image.Base64JsonImageData("somesymbols2")))
+      case _ => fail()
+    }
+  }
+
+  it should "fail on unexpected response" in {
+    val sttpBackend = sttpBackendStub
+      .whenRequestMatches(_.uri.path.endsWith(List("images", "generations")))
+      .thenRespond {
+        SttpResponse("{}", StatusCode.InternalServerError)
+      }
+
+    client(sttpBackend).createImage("this going to fail") match {
+      case Failure(_: OpenAIClientException) => succeed
+      case _ => fail()
+    }
+  }
+
+  behavior of "createImageEdit"
+
+  it should "succeed" in {
+    val sourceImage = File.createTempFile("image", ".png")
+    val mask = File.createTempFile("mask", ".png")
+    val prompt = "A cute baby sea otter wearing a beret"
+    val settings = ImageSettings(n = Some(2))
+
+    val sttpBackend = sttpBackendStub
+      .whenRequestMatches { request =>
+        val bodyCheck = request.body match {
+          case MultipartBody(parts) =>
+            val imageCheck = parts.exists {
+              case Part("image", FileBody(f, _), _, _) => f.name == sourceImage.getName
+              case _ => false
+            }
+
+            val maskCheck = parts.exists {
+              case Part("mask", FileBody(f, _), _, _) => f.name == mask.getName
+              case _ => false
+            }
+
+            val promptCheck = parts.exists {
+              case Part("prompt", StringBody(s, _, _), _, _) => s == prompt
+              case _ => false
+            }
+
+            val nCheck = parts.exists {
+              case Part("n", StringBody(s, _, _), _, _) => s == settings.n.get.toString
+              case _ => false
+            }
+
+            imageCheck && maskCheck && promptCheck && nCheck
+          case _ => false
+        }
+
+        request.uri.path.endsWith(List("images", "edits")) && bodyCheck
+      }
+      .thenRespond {
+        val responseBody =
+          """{
+               "created": 1589478378,
+               "data": [{
+                 "url": "https://some.url/image1"
+               }, {
+                 "url": "https://some.url/image2"
+               }]
+             }"""
+
+        SttpResponse(responseBody, StatusCode.Ok)
+      }
+
+    client(sttpBackend).createImageEdit(sourceImage, Some(mask), prompt, settings) match {
+      case Success(image) =>
+        image shouldEqual Image(
+          LocalDateTime.of(2020, 5, 14, 17, 46, 18),
+          List(
+            Image.UrlImageData("https://some.url/image1"),
+            Image.UrlImageData("https://some.url/image2")))
+      case _ => fail()
+    }
+
+    sourceImage.delete()
+    mask.delete()
+  }
+
+  it should "fail on unexpected response" in {
+    val sttpBackend = sttpBackendStub
+      .whenRequestMatches(_.uri.path.endsWith(List("images", "edits")))
+      .thenRespond {
+        SttpResponse("{}", StatusCode.InternalServerError)
+      }
+
+    val sourceImage = File.createTempFile("fail", ".png")
+    val prompt = "this going to fail"
+
+    client(sttpBackend).createImageEdit(sourceImage, None, prompt) match {
+      case Failure(_: OpenAIClientException) => succeed
+      case _ => fail()
+    }
+
+    sourceImage.delete()
+  }
+
+  behavior of "createImageVariation"
+
+  it should "succeed" in {
+    val sourceImage = File.createTempFile("image", ".png")
+    val settings = ImageSettings(n = Some(2))
+
+    val sttpBackend = sttpBackendStub
+      .whenRequestMatches { request =>
+        val bodyCheck = request.body match {
+          case MultipartBody(parts) =>
+            val imageCheck = parts.exists {
+              case Part("image", FileBody(f, _), _, _) => f.name == sourceImage.getName
+              case _ => false
+            }
+
+            val nCheck = parts.exists {
+              case Part("n", StringBody(s, _, _), _, _) => s == settings.n.get.toString
+              case _ => false
+            }
+
+            imageCheck && nCheck
+          case _ => false
+        }
+
+        request.uri.path.endsWith(List("images", "variations")) && bodyCheck
+      }
+      .thenRespond {
+        val responseBody =
+          """{
+               "created": 1589478378,
+               "data": [{
+                 "url": "https://some.url/image1"
+               }, {
+                 "url": "https://some.url/image2"
+               }]
+             }"""
+
+        SttpResponse(responseBody, StatusCode.Ok)
+      }
+
+    client(sttpBackend).createImageVariation(sourceImage, settings) match {
+      case Success(image) =>
+        image shouldEqual Image(
+          LocalDateTime.of(2020, 5, 14, 17, 46, 18),
+          List(
+            Image.UrlImageData("https://some.url/image1"),
+            Image.UrlImageData("https://some.url/image2")))
+      case _ => fail()
+    }
+
+    sourceImage.delete()
+  }
+
+  it should "fail on unexpected response" in {
+    val sttpBackend = sttpBackendStub
+      .whenRequestMatches(_.uri.path.endsWith(List("images", "variations")))
+      .thenRespond {
+        SttpResponse("{}", StatusCode.InternalServerError)
+      }
+
+    val sourceImage = File.createTempFile("fail", ".png")
+
+    client(sttpBackend).createImageVariation(sourceImage) match {
+      case Failure(_: OpenAIClientException) => succeed
+      case _ => fail()
+    }
+
+    sourceImage.delete()
   }
 }

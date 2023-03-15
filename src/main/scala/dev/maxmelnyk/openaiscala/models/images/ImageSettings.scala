@@ -10,10 +10,10 @@ import enumeratum._
  * @param responseFormat The format in which the generated images are returned.
  * @param user A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.
  */
-case class ImageSettings(n: Option[Long],
-                         size: Option[ImageSettings.Size],
-                         responseFormat: Option[ImageSettings.ResponseFormat],
-                         user: Option[String])
+case class ImageSettings(n: Option[Long] = None,
+                         size: Option[ImageSettings.Size] = None,
+                         responseFormat: Option[ImageSettings.ResponseFormat] = None,
+                         user: Option[String] = None)
 
 object ImageSettings {
   sealed abstract class Size(override val entryName: String) extends EnumEntry

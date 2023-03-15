@@ -12,6 +12,7 @@ import sttp.client3.{BasicRequestBody, BodySerializer, RequestBody, StringBody, 
 import sttp.model.{MediaType, Part}
 
 import java.nio.charset.StandardCharsets
+import scala.collection.immutable.Seq // for scala 2.12 compatibility
 
 private[openaiscala] object BodySerializers {
 
@@ -84,11 +85,7 @@ private[openaiscala] object BodySerializers {
       .getOrElse(throw OpenAIClientException("Failed to encode json to object"))
       .toMap
       .map { case (name, jsonValue) =>
-        val stringValue = jsonValue
-          .asString
-          .getOrElse(throw OpenAIClientException("Failed to encode json field to string"))
-
-        multipart(name, stringValue)
+        multipart(name, jsonValue.noSpaces)
       }
       .toList
   }
