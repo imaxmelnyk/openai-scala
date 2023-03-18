@@ -44,4 +44,17 @@ object Dependencies {
 
     val deps: Seq[ModuleID] = catsEffect ++ http4s ++ sttp
   }
+
+  object AkkaHttpExample {
+    private val akkaVersion = "2.8.0"
+    private val akkaHttpVersion = "10.5.0"
+    private val akka = Seq(
+      "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion,
+      "com.typesafe.akka" %% "akka-stream" % akkaVersion,
+      "com.typesafe.akka" %% "akka-http" % akkaHttpVersion)
+
+    private val sttp = Seq("com.softwaremill.sttp.client3" %% "akka-http-backend" % "3.8.13")
+
+    val deps: Seq[ModuleID] = akka ++ sttp
+  }
 }
