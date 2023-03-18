@@ -31,4 +31,17 @@ object Dependencies {
     val scala2Deps: Seq[ModuleID] = Seq(
       "io.circe" %% "circe-generic-extras" % "0.14.3")
   }
+
+  object CatsEffectHttp4sExample {
+    private val catsEffect = Seq("org.typelevel" %% "cats-effect" % "3.4.8")
+
+    private val http4sVersion = "0.23.14"
+    private val http4s = Seq(
+      "org.http4s" %% "http4s-dsl" % http4sVersion,
+      "org.http4s" %% "http4s-blaze-client" % http4sVersion)
+
+    private val sttp = Seq("com.softwaremill.sttp.client3" %% "http4s-backend" % "3.8.13")
+
+    val deps: Seq[ModuleID] = catsEffect ++ http4s ++ sttp
+  }
 }
