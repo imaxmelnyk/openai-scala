@@ -1,6 +1,6 @@
 package dev.maxmelnyk.openaiscala.client
 
-import cats.MonadError
+import cats.MonadThrow
 import cats.syntax.all.toFunctorOps
 import com.typesafe.scalalogging.LazyLogging
 import dev.maxmelnyk.openaiscala.exceptions.OpenAIClientException
@@ -24,7 +24,7 @@ import java.io.File
 private[client] class DefaultOpenAIClient[F[_]](private val apiKey: String,
                                                 private val orgIdOpt: Option[String])
                                                (private val sttpBackend: SttpBackend[F, Any])
-                                               (private implicit val monadError: MonadError[F, Throwable])
+                                               (private implicit val monadThrow: MonadThrow[F])
   extends OpenAIClient[F]
     with LazyLogging {
 

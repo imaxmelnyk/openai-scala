@@ -19,6 +19,7 @@ ThisBuild / sonatypeProjectHosting := Some(GitHubHosting("imaxmelnyk", "openai-s
 // don't publish this project
 publish / skip := true
 
-lazy val root = project.in(file(".")).aggregate(client, catsEffectHttp4sExample)
+lazy val root = project.in(file(".")).aggregate(client, catsEffectHttp4sExample, akkaHttpExample)
 lazy val client = project.in(file("client"))
 lazy val catsEffectHttp4sExample = project.in(file("examples/cats-effect-http4s")).dependsOn(client)
+lazy val akkaHttpExample = project.in(file("examples/akka-http")).dependsOn(client)

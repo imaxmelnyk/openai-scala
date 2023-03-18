@@ -42,9 +42,12 @@ val sttpBackend = ???
 
 val client = OpenAIClient(sttpBackend)
 ```
-Please note that the [cats](https://typelevel.org/cats/)'s `MonadError[F, Throwable]` for the monad `F` used in `sttpBackend` must be implicitly in scope.
+Please note that the [cats](https://typelevel.org/cats/)'s `MonadThrow[F]` for the monad `F` used in `sttpBackend` must be implicitly in scope.
 
-### Example with [cats effect](https://typelevel.org/cats-effect/docs/getting-started) `IO` monad and [http4s](https://github.com/http4s/http4s) as [sttp](https://sttp.softwaremill.com/en/latest/) backend
+### Example
+As a simple example lets use [cats effect](https://typelevel.org/cats-effect/docs/getting-started) `IO` monad
+and [http4s](https://github.com/http4s/http4s) as [sttp](https://sttp.softwaremill.com/en/latest/) backend.
+
 First, make sure you have the following dependencies:
 ```scala
 // cats effect
@@ -106,7 +109,8 @@ object Main extends IOApp.Simple {
   }
 }
 ```
-Please note that this is just an example, and you can use any compatible monad and sttp backend with the OpenAI Scala Client.
+Please note that this is just an example, and you can use any compatible monad and sttp backend with the OpenAI Scala Client.  
+This example can be found [here](examples/cats-effect-http4s), more examples can be found in the [examples](examples) directory.
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
