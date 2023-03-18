@@ -16,6 +16,9 @@ ThisBuild / sonatypeCredentialHost := "s01.oss.sonatype.org"
 ThisBuild / sonatypeRepository := "https://s01.oss.sonatype.org/service/local"
 ThisBuild / sonatypeProjectHosting := Some(GitHubHosting("imaxmelnyk", "openai-scala", "max@maxmelnyk.dev"))
 
+// don't publish this project
+publish / skip := true
+
 lazy val root = project.in(file(".")).aggregate(client, catsEffectHttp4sExample)
 lazy val client = project.in(file("client"))
 lazy val catsEffectHttp4sExample = project.in(file("examples/cats-effect-http4s")).dependsOn(client)
